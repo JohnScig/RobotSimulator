@@ -13,7 +13,8 @@ namespace ActionRobot
         None = 0,
         Wall = 1,
         Start = 2,
-        Finish = 3
+        Finish = 3,
+        Moved = 4
     }
 
     /// <summary>
@@ -51,6 +52,8 @@ namespace ActionRobot
         /// Current cell type.
         /// </summary>
         public eCellType CurrentCellType { get; set; } = eCellType.Start;
+        public Point CurrentRobotPosition { get; set; }
+        public string EndOfGame { get; set; } = "Could't get to the finish";
 
         #endregion
 
@@ -103,6 +106,8 @@ namespace ActionRobot
                 RemoveAllOccurences(CurrentCellType);
             }
             _area[x, y] = CurrentCellType;
+            if (CurrentCellType == eCellType.Start)
+                CurrentRobotPosition = new Point(x, y);
         }
 
         /// <summary>
@@ -118,6 +123,7 @@ namespace ActionRobot
                 case eCellType.Start: return 'S';
                 case eCellType.Finish: return 'F';
                 case eCellType.Wall: return 'X';
+                case eCellType.Moved: return 'R';
                 default: return ' ';
             }
         }
@@ -131,7 +137,12 @@ namespace ActionRobot
         /// </summary>
         public void SetUpMove()
         {
-            // IMPLEMENT
+            _moves.Enqueue(UpMove);
+        }
+
+        public Point UpMove(Point from)
+        {
+            return new Point(--from.X, from.Y);
         }
 
         /// <summary>
@@ -139,25 +150,37 @@ namespace ActionRobot
         /// </summary>
         public void SetDownMove()
         {
-            // IMPLEMENT
+            _moves.Enqueue(DownMove);
         }
 
+        public Point DownMove(Point from)
+        {
+            return new Point(++from.X, from.Y);
+        }
         /// <summary>
         /// Adds move left.
         /// </summary>
         public void SetLeftMove()
         {
-            // IMPLEMENT
+            _moves.Enqueue(LeftMove);
         }
 
+        public Point LeftMove(Point from)
+        {
+            return new Point(from.X, --from.Y);
+        }
         /// <summary>
         /// Adds move right.
         /// </summary>
         public void SetRightMove()
         {
-            // IMPLEMENT
+            _moves.Enqueue(RightMove);
         }
 
+        public Point RightMove(Point from)
+        {
+            return new Point(from.X, ++from.Y);
+        }
         /// <summary>
         /// Clears robot moves.
         /// </summary>
@@ -175,7 +198,48 @@ namespace ActionRobot
         /// </summary>
         public void RunSimulation()
         {
-            // IMPLEMENT
+            CurrentCellType = eCellType.Moved;
+            int iteration = _moves.Count;
+
+            for (int i = 0; i < iteration; i++)
+            {
+                CurrentRobotPosition = _moves.Dequeue().Invoke(CurrentRobotPosition);
+
+                if (CheckFail())
+                {
+                    EndOfGame = "Oops, you failed";
+                    break;
+                }
+
+                if (CheckWin())
+                {
+                    EndOfGame = "Finish! YAY!";
+                    break;
+                }
+
+
+                SetTile(CurrentRobotPosition.X, CurrentRobotPosition.Y);
+            }
+        }
+
+        public bool CheckWin()
+        {
+            if (GetTile(CurrentRobotPosition.X, CurrentRobotPosition.Y) == 'F')
+            { return true; }
+
+            return false;
+        }
+
+        public bool CheckFail()
+        {
+
+            if (CurrentRobotPosition.X < 0 || CurrentRobotPosition.X > 9 || CurrentRobotPosition.Y > 9 || CurrentRobotPosition.Y < 0)
+            { return true; }
+
+            if (GetTile(CurrentRobotPosition.X, CurrentRobotPosition.Y) == 'X')
+            { return true; }
+
+            return false;
         }
 
         #endregion

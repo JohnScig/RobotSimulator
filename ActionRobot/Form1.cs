@@ -32,21 +32,25 @@ namespace ActionRobot
         private void cmdUp_Click(object sender, EventArgs e)
         {
             _viewModel.SetUpMove();
+            txtMoves.Text += "Up\n";
         }
 
         private void cmdLeft_Click(object sender, EventArgs e)
         {
             _viewModel.SetLeftMove();
+            txtMoves.Text += "Left\n";
         }
 
         private void cmdDown_Click(object sender, EventArgs e)
         {
             _viewModel.SetDownMove();
+            txtMoves.Text += "Down\n";
         }
 
         private void cmdRight_Click(object sender, EventArgs e)
         {
             _viewModel.SetRightMove();
+            txtMoves.Text += "Right\n";
         }
 
         private void optStart_CheckedChanged(object sender, EventArgs e)
@@ -87,11 +91,14 @@ namespace ActionRobot
         private void cmdStart_Click(object sender, EventArgs e)
         {
             _viewModel.RunSimulation();
+            grdArea.Refresh();
+            MessageBox.Show(_viewModel.EndOfGame);
         }
 
         private void cmdClearMoves_Click(object sender, EventArgs e)
         {
             _viewModel.ClearMoves();
+            txtMoves.Clear();
         }       
     }
 }

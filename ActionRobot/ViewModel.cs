@@ -137,7 +137,8 @@ namespace ActionRobot
         /// </summary>
         public void SetUpMove()
         {
-            _moves.Enqueue(UpMove);
+            //_moves.Enqueue(UpMove);
+            _moves.Enqueue(point => new Point(--point.X, point.Y));
         }
 
         public Point UpMove(Point from)
@@ -150,31 +151,36 @@ namespace ActionRobot
         /// </summary>
         public void SetDownMove()
         {
-            _moves.Enqueue(DownMove);
+            //_moves.Enqueue(DownMove);
+            _moves.Enqueue(point => new Point(++point.X, point.Y));
         }
 
         public Point DownMove(Point from)
         {
             return new Point(++from.X, from.Y);
         }
+
         /// <summary>
         /// Adds move left.
         /// </summary>
         public void SetLeftMove()
         {
-            _moves.Enqueue(LeftMove);
+            //_moves.Enqueue(LeftMove);
+            _moves.Enqueue(point => new Point(point.X, --point.Y));
         }
 
         public Point LeftMove(Point from)
         {
             return new Point(from.X, --from.Y);
         }
+
         /// <summary>
         /// Adds move right.
         /// </summary>
         public void SetRightMove()
         {
-            _moves.Enqueue(RightMove);
+            //_moves.Enqueue(RightMove);
+            _moves.Enqueue(point => new Point(point.X, ++point.Y));
         }
 
         public Point RightMove(Point from)
